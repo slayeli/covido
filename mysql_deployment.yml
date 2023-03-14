@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysqldeployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysqldb
+      version: "8.0.32"
+  template:
+    metadata:
+      labels:
+        app: mysqldb
+        version: "8.0.32"
+    spec:
+      containers:
+      - name: mysqlcontainer
+        image: "mysql:8.0.32"
+        ports:
+        - containerPort: 3306
+          name: mysqlport
+          protocol: TCP
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: mysqlsecret
+        volumeMounts:
+          - name: mysqldbvolume
+            mountPath: /var/lib/mysql
+      volumes:
+        - name: mysqldbvolume
+          persistentVolumeClaim:
+            claimName: mysqlpvc
+
+
+

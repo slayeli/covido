@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql_clusterip_service
+spec:
+  type: ClusterIP
+  selector:
+    app: mysqldb
+    version: "8.0.32"
+  ports:
+  - port: 3306
+    targetPort: 3306
+    protocol: TCP
+  

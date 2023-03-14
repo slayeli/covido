@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: covidodeployement
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: covido
+      version: "1.0"
+  template:
+    metadata:
+      labels:
+        app: covido
+      version: "1.0"
+    spec:
+      containers:
+      - name: covido_container
+        image: yelender/covido:1.0
+        ports:
+        - containerPort: 8080
+          name: tomcat_port
+          protocol: TCP
+        env:
+          - name: spring_datasource_driver-class-name
+            valueFrom:
+              configMapKeyRef:
+                name: covidoconfigmap
+                key: driver-class-name
+          - name: spring_datasource_url
+            valueFrom:
+              configMapKeyRef:
+                name: covidoconfigmap
+                key: url
+          - name: spring_datasource_username
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: mysqlsecret
+          - name: spring_datasource_password
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: mysqlsecret
+        readinessProbe:
+            httpGet:
+              path: /covido/actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 15
+            timeoutSeconds: 25     
+            failureThreshold: 3
+        livenessProbe:
+            httpGet:
+              path: /covido/actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 15
+            timeoutSeconds: 25
+            failureThreshold: 3
+        
+
+                          
+

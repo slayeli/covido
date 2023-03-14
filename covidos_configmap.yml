@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: covidoconfigmap
+data:
+  driver-class-name: com.mysql.cj.jdbc.Driver
+  url: "jdbc:mysql://mysql_clusterip_service:3306/covidodb"
